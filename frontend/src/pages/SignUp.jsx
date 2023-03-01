@@ -41,7 +41,7 @@ const SignUp = () => {
       );
     } catch (e) {
       toast({
-        title: e?.response?.data?.message,
+        title: e?.response?.data?.error,
         description: "",
         status: "success",
         duration: 5000,

@@ -36,7 +36,7 @@ const ForgotPassword = () => {
     .catch((e)=>{
       console.log(e)
       toast({
-        title: e?.response?.data?.message,
+        title: e?.response?.data?.error,
         description: "Try again later",
         status: "error",
         duration: 5000,

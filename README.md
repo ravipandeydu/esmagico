@@ -4,8 +4,8 @@ Deployed Link: https://esmagico.onrender.com
 (*deployed link may be slow)
 
 ## Dummy Admin
-`One admin is hard-coded to prevent misuse by other users`
-(by using these credentials you can make anyone admin or users)
+- `One admin is hard-coded to prevent misuse by other users`
+- (by using these credentials you can make anyone admin or users)
 - eamil: admin@admin.com
 - password: admin
 

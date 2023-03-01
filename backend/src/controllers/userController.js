@@ -55,7 +55,7 @@ const signupUser = async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(401).send(err.message);
+    return res.status(401).send({error: err.message});
   }
 };
 
@@ -114,7 +114,7 @@ const forgotPassword = async (req, res) => {
           (60 * 1000) -
           hours * 60
       );
-      res.status(401).send(`Try after ${hours} hrs and ${minutes} mins`);
+      res.status(401).send({error: `Try after ${hours} hrs and ${minutes} mins`});
     } else {
       if (token) {
         await token.deleteOne();
@@ -223,7 +223,7 @@ const updateUser = async (req, res) => {
   if (updatedUser) {
     res.status(200).send(updatedUser);
   } else {
-    res.status(401).send("couldn't update");
+    res.status(401).send({error: "couldn't update"});
   }
 };
 
@@ -239,7 +239,7 @@ const searchUsers = async (req, res) => {
     });
     return res.status(200).send(user);
   } catch (er) {
-    return res.status(401).send(er.message);
+    return res.status(401).send({error: er.message});
   }
 };
 
