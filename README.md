@@ -6,7 +6,7 @@ Deployed Link: https://esmagico.onrender.com
 ## Dummy Admin
 - `One admin is hard-coded to prevent misuse by other users`
 - (by using these credentials you can make anyone admin or users)
-- eamil: admin@admin.com
+- email: admin@admin.com
 - password: admin
 
 ## To use it locally follow the following steps
