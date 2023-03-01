@@ -18,7 +18,6 @@ export const getAllUsers = (token) => async (dispatch) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    // let events = response.data.filter((event) => event.userId !== user._id);
 
     dispatch({ type: GET_USERS_SUCCESS, payload: response.data });
     console.log(response.data);

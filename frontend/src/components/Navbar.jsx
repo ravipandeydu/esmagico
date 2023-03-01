@@ -15,9 +15,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../Redux/auth/auth.actions";
 
 const Navbar = () => {
-  const token = useSelector(store => store.auth.token);
+  const token = useSelector((store) => store.auth.token);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   function handleLogout() {
     dispatch(logout());
@@ -45,9 +44,15 @@ const Navbar = () => {
           My Profile
         </Text>
       </Link>
-      {
-        user?.user.role === "admin" ? <Link to={"/users"}><Box>Users</Box></Link> : ""
-      }
+      {user?.user.role === "admin" ? (
+        <Link to={"/users"}>
+          <Text px={6} py={2} fontSize="xl">
+            Users
+          </Text>
+        </Link>
+      ) : (
+        ""
+      )}
       {token ? (
         <Flex gap={"10px"}>
           <Box px={6} py={2} fontWeight="600" fontSize={"18px"}>

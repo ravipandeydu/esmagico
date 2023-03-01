@@ -1,21 +1,48 @@
-import { Box, Button, ButtonGroup, Card, CardBody, CardFooter, Divider, FormLabel, Heading, Input, Spacer } from '@chakra-ui/react'
-import axios from 'axios';
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
-import { loginSuccess } from '../Redux/auth/auth.actions';
+import {
+  useToast,
+  Box,
+  Button,
+  ButtonGroup,
+  Card,
+  CardBody,
+  CardFooter,
+  Divider,
+  FormLabel,
+  Heading,
+  Input,
+  Spacer,
+} from "@chakra-ui/react";
+import axios from "axios";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
 const port = import.meta.env.VITE_PORT;
 
 const ForgotPassword = () => {
-    const [email, setEmail] = useState()
-
-    const dispatch = useDispatch();
+  const toast = useToast();
+  const [email, setEmail] = useState();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post(`${port}/forgotpassword`, {email}).then(()=>{
-        console.log("Conn")
+    axios.post(`${port}/forgotpassword`, { email }).then((r) => {
+      toast({
+        title: r?.data?.message,
+        description: "Check you mail",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
     })
+    .catch((e)=>{
+      console.log(e)
+      toast({
+        title: e?.response?.data?.message,
+        description: "Try again later",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    });
   };
   return (
     <Box align="center">
@@ -28,28 +55,15 @@ const ForgotPassword = () => {
         <Divider />
         <CardFooter>
           <ButtonGroup>
-            {/* {loading ? (
-              <Button
-                isLoading
-                loadingText="Loading"
-                colorScheme="teal"
-                variant="outline"
-                spinnerPlacement="end"
-              >
-                Send Link
-              </Button>
-            ) : ( */}
-              <Button variant="solid" colorScheme="blue" onClick={handleSubmit}>
-                Send Link
-              </Button>
-            {/* )} */}
+            <Button variant="solid" colorScheme="blue" onClick={handleSubmit}>
+              Send Link
+            </Button>
             <Spacer />
           </ButtonGroup>
         </CardFooter>
       </Card>
-      {/* {error ? <Box>Something Went Wrong</Box> : ""} */}
     </Box>
-  )
-}
+  );
+};
 
-export default ForgotPassword
+export default ForgotPassword;

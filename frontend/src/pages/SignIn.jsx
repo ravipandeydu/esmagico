@@ -1,4 +1,5 @@
 import {
+  useToast,
   Box,
   Button,
   Card,
@@ -17,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../Redux/auth/auth.actions";
 
 const SignIn = () => {
+  const toast = useToast();
   const { loading, error } = useSelector((state) => state.auth);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState("");
@@ -27,11 +29,26 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      dispatch(loginSuccess({ email, password })).then(() => {
+      dispatch(loginSuccess({ email, password })).then((r) => {
+        console.log(r)
+        toast({
+          title: r?.data?.message,
+          description: "Successfully logged in",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
         navigate("/myprofile");
       });
     } catch (e) {
       console.log(e);
+      toast({
+        title: e?.response?.data?.message,
+        description: "",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
   return (
@@ -40,10 +57,9 @@ const SignIn = () => {
       <Card maxW="lg">
         <CardBody>
           <FormLabel>Email</FormLabel>
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input onChange={(e) => setEmail(e.target.value)} />
           <FormLabel>Password</FormLabel>
           <Input
-            value={password}
             onChange={(e) => setPassword(e.target.value)}
             type="password"
           />

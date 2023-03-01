@@ -1,18 +1,13 @@
 import {
+  useToast,
   Box,
   Button,
-  ButtonGroup,
   Card,
   CardBody,
   CardFooter,
   Divider,
-  Flex,
   FormLabel,
-  Image,
   Input,
-  Alert,
-  AlertIcon,
-  AlertTitle,
   Heading,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
@@ -21,23 +16,37 @@ import { useNavigate } from "react-router-dom";
 import { signupSuccess } from "../Redux/auth/auth.actions";
 
 const SignUp = () => {
+  const toast = useToast();
   const { loading, error } = useSelector((state) => state.auth);
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState();
+  const [email, setEmail] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   function handleSignUp(e) {
     e.preventDefault();
     try {
-      dispatch(signupSuccess({ name, phone_number: phone, password })).then(
-        () => {
+      dispatch(signupSuccess({ name, email, password })).then(
+        (r) => {
+          toast({
+            title: r?.data?.message,
+            description: "You can login now",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
           navigate("/signin");
         }
       );
     } catch (e) {
-      console.log(e);
+      toast({
+        title: e?.response?.data?.message,
+        description: "",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   }
 
@@ -48,8 +57,8 @@ const SignUp = () => {
         <CardBody>
           <FormLabel>Name</FormLabel>
           <Input value={name} onChange={(e) => setName(e.target.value)} />
-          <FormLabel>Phone Number</FormLabel>
-          <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <FormLabel>Email</FormLabel>
+          <Input value={email} onChange={(e) => setEmail(e.target.value)} />
           <FormLabel>Password</FormLabel>
           <Input
             value={password}

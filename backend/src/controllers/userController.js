@@ -22,12 +22,14 @@ const signupUser = async (req, res) => {
     let user = await userModel.findOne({ email: email });
     //already registered user
     if (user) {
-      return res.send({ error: "Already Registered, Please Login" });
+      return res
+        .status(401)
+        .send({ error: "Already Registered, Please Login" });
     } else {
       // hash the password and save user
       bcrypt.hash(password, 6, async function (err, hash) {
         if (err) {
-          res.send({ error: "Something wrong" });
+          res.status(401).send({ error: "Something wrong" });
           console.log(err);
         } else {
           const newUser = new userModel({
@@ -46,7 +48,9 @@ const signupUser = async (req, res) => {
             secure: true,
           });
 
-          res.send({ message: "Succesfully Registered", user: newUser, token });
+          res
+            .status(200)
+            .send({ message: "Succesfully Registered", user: newUser, token });
         }
       });
     }
@@ -79,13 +83,13 @@ const signinUser = async (req, res) => {
           user,
         });
       } else if (err) {
-        res.send({ error: "Something went wrong" });
+        res.status(401).send({ error: "Something went wrong" });
       } else {
-        res.send({ error: "Wrong username or password" });
+        res.status(401).send({ error: "Wrong username or password" });
       }
     });
   } else {
-    res.send({ error: "Wrong username or password" });
+    res.status(401).send({ error: "Wrong username or password" });
   }
 };
 
@@ -96,17 +100,17 @@ const forgotPassword = async (req, res) => {
 
   if (!user) {
     console.log(email);
-    res.status(401).send("User does not exist, Please Sign up");
+    res.status(401).send({ error: "User does not exist, Please Sign up" });
   } else {
     // Delete token if it exists in DB
     let token = await Token.findOne({ userId: user._id });
-    if (Date.parse(token.createdAt) + 24 * 60 * (60 * 1000) > Date.now()) {
+    if (Date.parse(token?.createdAt) + 24 * 60 * (60 * 1000) > Date.now()) {
       let hours = Math.floor(
-        (Date.parse(token.createdAt) + 24 * 60 * (60 * 1000) - Date.now()) /
+        (Date.parse(token?.createdAt) + 24 * 60 * (60 * 1000) - Date.now()) /
           (60 * 60 * 1000)
       );
       let minutes = Math.ceil(
-        (Date.parse(token.createdAt) + 24 * 60 * (60 * 1000) - Date.now()) /
+        (Date.parse(token?.createdAt) + 24 * 60 * (60 * 1000) - Date.now()) /
           (60 * 1000) -
           hours * 60
       );
@@ -117,7 +121,7 @@ const forgotPassword = async (req, res) => {
       }
 
       // Create Reste Token
-      let resetToken = Date.parse('2023-02-28T15:32:36.995+00:00') + user._id;
+      let resetToken = Date.parse("2023-02-28T15:32:36.995+00:00") + user._id;
 
       // Save Token to DB
       await new Token({
@@ -150,7 +154,7 @@ const forgotPassword = async (req, res) => {
         res.status(200).send({ success: true, message: "Reset Email Sent" });
       } catch (error) {
         console.log(email);
-        res.status(500).send("Email not sent, please try again");
+        res.status(401).send({ error: "Email not sent, please try again" });
       }
     }
   }
@@ -168,16 +172,23 @@ const resetPassword = async (req, res) => {
   });
 
   if (!userToken) {
-    res.status(401).send("Invalid or Expired Token");
+    res.status(401).send({ error: "Invalid or Expired Token" });
+  } else {
+    // Find user
+    const user = await userModel.findOne({ _id: userToken.userId });
+    bcrypt.hash(password, 6, async function (err, hash) {
+      if (err) {
+        res.status(401).send({ error: "Something wrong" });
+        console.log(err);
+      } else {
+        user.password = hash;
+        await user.save();
+        res.status(200).send({
+          message: "Password Reset Successful, Please Login",
+        });
+      }
+    });
   }
-
-  // Find user
-  const user = await userModel.findOne({ _id: userToken.userId });
-  user.password = password;
-  await user.save();
-  res.status(200).send({
-    message: "Password Reset Successful, Please Login",
-  });
 };
 
 // Logout User
@@ -194,13 +205,13 @@ const logout = async (req, res) => {
 
 const getUsers = async (req, res) => {
   const users = await userModel.find();
-  res.send(users);
+  res.status(200).send(users);
 };
 
 const getMyDetails = async (req, res) => {
   const { id } = req.params;
   const user = await userModel.findOne({ _id: id });
-  res.send(user);
+  res.status(200).send(user);
 };
 
 const updateUser = async (req, res) => {
@@ -210,9 +221,9 @@ const updateUser = async (req, res) => {
     req.body
   );
   if (updatedUser) {
-    res.send(updatedUser);
+    res.status(200).send(updatedUser);
   } else {
-    res.send("couldn't update");
+    res.status(401).send("couldn't update");
   }
 };
 
@@ -228,7 +239,7 @@ const searchUsers = async (req, res) => {
     });
     return res.status(200).send(user);
   } catch (er) {
-    return res.status(403).send(er.message);
+    return res.status(401).send(er.message);
   }
 };
 

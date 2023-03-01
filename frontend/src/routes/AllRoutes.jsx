@@ -12,7 +12,7 @@ import SignUp from "../pages/SignUp";
 const AllRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
       <Route path="/myprofile" element={<PrivateRoute><MyProfile /></PrivateRoute>} />
       <Route path="/users" element={<PrivateRoute><Users /></PrivateRoute>} />
       <Route path="/forgotpassword" element={<ForgotPassword />} />
